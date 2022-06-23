@@ -1,10 +1,9 @@
-package user
+package auth
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"io"
+	"goland-playground/internal/web"
 	"net/http"
 )
 
@@ -13,23 +12,11 @@ type credentials struct {
 	Password string `json:"password"`
 }
 
-func handleJsonPostError(context *gin.Context, err error) {
-	if errors.Is(err, io.EOF) {
-		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
-			"message": "Request body cannot be empty.",
-		})
-	} else {
-		context.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{
-			"message": "An unexpected error occurred.",
-		})
-	}
-}
-
 func authorizeUser(context *gin.Context, log *logrus.Logger) {
 	var authPair credentials
 	err := context.ShouldBindJSON(&authPair)
 	if err != nil {
-		handleJsonPostError(context, err)
+		web.HandleJsonPostError(context, err)
 		return
 	}
 	emailMissing := authPair.Email == ""
