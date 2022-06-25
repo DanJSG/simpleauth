@@ -1,9 +1,9 @@
 package auth
 
 import (
+	"github.com/danjsg/simpleauth/internal/web"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"goland-playground/internal/web"
 	"net/http"
 )
 

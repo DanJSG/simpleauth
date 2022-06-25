@@ -1,33 +1,34 @@
-package main
+package auth
 
 import (
 	"github.com/danjsg/simpleauth/internal/auth"
 	"github.com/danjsg/simpleauth/internal/collections"
 	"github.com/danjsg/simpleauth/internal/logging"
 	"github.com/gin-gonic/gin"
+	"testing"
 )
 
-func main() {
-	router := gin.New()
-	log := logging.DefaultLogger()
-	ginLogger := logging.GinLogger(log)
-	router.Use(ginLogger, gin.Recovery())
+func TestTemplating(t *testing.T) {
+
+	gin.SetMode(gin.ReleaseMode)
+	router := gin.Default()
 	baseRouter := router.Group("/api")
 
-	API := auth.API{
+	log := logging.DefaultLogger()
+	API := &auth.API{
+		Log:      log,
+		BasePath: "user",
 		Version: auth.Version{
 			Major: 1,
 			Minor: 0,
 			Patch: 0,
 		},
-		BasePath:      "/user",
 		RelativePaths: collections.HashSet[string](),
-		Log:           log,
 	}
 	API.RegisterHandlers(baseRouter)
 
-	err := router.Run()
-	if err != nil {
-		log.Fatalf("Fatal error encountered whilst running server. Error: %s", err)
+	routes := router.Routes()
+	for _, route := range routes {
+		log.Infof("Registered: %s %s", route.Method, route.Path)
 	}
 }
