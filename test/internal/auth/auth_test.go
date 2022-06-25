@@ -2,7 +2,6 @@ package auth
 
 import (
 	"github.com/danjsg/simpleauth/internal/auth"
-	"github.com/danjsg/simpleauth/internal/collections"
 	"github.com/danjsg/simpleauth/internal/logging"
 	"github.com/gin-gonic/gin"
 	"testing"
@@ -23,7 +22,6 @@ func TestTemplating(t *testing.T) {
 			Minor: 0,
 			Patch: 0,
 		},
-		RelativePaths: collections.HashSet[string](),
 	}
 	API.RegisterHandlers(baseRouter)
 
