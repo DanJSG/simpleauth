@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/danjsg/simpleauth/internal/auth"
 	"github.com/danjsg/simpleauth/internal/collections"
 	"github.com/danjsg/simpleauth/internal/logging"
+	"github.com/danjsg/simpleauth/internal/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,8 +14,8 @@ func main() {
 	router.Use(ginLogger, gin.Recovery())
 	baseRouter := router.Group("/api")
 
-	API := auth.API{
-		Version: auth.Version{
+	API := user.API{
+		Version: user.Version{
 			Major: 1,
 			Minor: 0,
 			Patch: 0,
