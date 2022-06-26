@@ -1,56 +1,95 @@
 package user
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
-type Service interface {
-	createUser(*gin.Context, *credentials) string
-	authorizeUser(*gin.Context, *credentials) string
-	getAccessToken(*gin.Context, string) string
-	logoutUser(*gin.Context, string, string) bool
+type Creator interface {
+	CreateUser(*gin.Context, *credentials)
 }
 
-type repositoryBackedService struct {
-	log        logrus.FieldLogger
-	repository *repository
+type TokenIssuer interface {
+	IssueRefreshToken(*gin.Context, *credentials)
+	IssueAccessToken(*gin.Context, *string)
 }
 
-func (s *repositoryBackedService) createUser(context *gin.Context, creds *credentials) string {
-	emailMissing := creds.Email == ""
-	passwordMissing := creds.Password == ""
-	if emailMissing || passwordMissing {
-		var message string
-		if emailMissing && passwordMissing {
-			message = "Authorization failed: No email or password provided."
-		} else if emailMissing {
-			message = "Authorization failed: No email provided."
-		} else if passwordMissing {
-			message = "Authorization failed: No password provided."
-		}
+type TokenRevoker interface {
+	Revoke(*gin.Context, *string, *string)
+}
+
+type Service struct {
+	repository *Repository
+}
+
+func (s *Service) CreateUser(context *gin.Context, credentials *credentials) {
+	if err := credentialsPresent(credentials); err != nil {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, map[string]string{
+			"message": err.Error(),
+		})
+		return
+	}
+	// TODO implement me
+	panic("implement me")
+}
+
+func (s *Service) IssueRefreshToken(context *gin.Context, credentials *credentials) {
+	if err := credentialsPresent(credentials); err != nil {
+		context.AbortWithStatusJSON(http.StatusUnauthorized, map[string]string{
+			"message": err.Error(),
+		})
+		return
+	}
+	//TODO implement me
+	panic("implement me")
+}
+
+func (s *Service) IssueAccessToken(context *gin.Context, refreshToken *string) {
+	if *refreshToken == "" {
+		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
+			"message": "could not issue access token: refresh token is empty",
+		})
+		return
+	}
+	//TODO implement me
+	panic("implement me")
+}
+
+func (s *Service) Revoke(context *gin.Context, accessToken *string, refreshToken *string) {
+	accessTokenMissing := *accessToken == ""
+	refreshTokenMissing := *refreshToken == ""
+	if accessTokenMissing || refreshTokenMissing {
+		var message string
+		if accessTokenMissing && refreshTokenMissing {
+			message = "could not revoke tokens: refresh and access tokens missing"
+		} else if accessTokenMissing {
+			message = "could not revoke tokens: access token missing"
+		} else {
+			message = "could not revoke tokens: refresh token missing"
+		}
+		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
 			"message": message,
 		})
-		return ""
 	}
-	s.log.Infof("authPair: %#v", creds)
-	//TODO finish implementing
-	panic("implement me")
-}
-
-func (s *repositoryBackedService) authorizeUser(context *gin.Context, creds *credentials) string {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (s *repositoryBackedService) getAccessToken(context *gin.Context, refreshToken string) string {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s *repositoryBackedService) logoutUser(context *gin.Context, accessToken string, refreshToken string) bool {
-	//TODO implement me
-	panic("implement me")
+func credentialsPresent(credentials *credentials) error {
+	emailMissing := credentials.Email == ""
+	passwordMissing := credentials.Password == ""
+	credentialsMissing := emailMissing || passwordMissing
+	if credentialsMissing {
+		var message string
+		if emailMissing && passwordMissing {
+			message = "authorization failed: no email or password provided"
+		} else if emailMissing {
+			message = "authorization failed: no email provided"
+		} else if passwordMissing {
+			message = "authorization failed: no password provided"
+		}
+		return errors.New(message)
+	}
+	return nil
 }

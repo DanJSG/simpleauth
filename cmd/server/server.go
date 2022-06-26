@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/danjsg/simpleauth/internal/collections"
 	"github.com/danjsg/simpleauth/internal/logging"
 	"github.com/danjsg/simpleauth/internal/user"
 	"github.com/gin-gonic/gin"
@@ -20,9 +19,8 @@ func main() {
 			Minor: 0,
 			Patch: 0,
 		},
-		BasePath:      "/user",
-		RelativePaths: collections.HashSet[string](),
-		Log:           log,
+		BasePath: "/user",
+		Log:      log,
 	}
 	API.RegisterHandlers(baseRouter)
 
