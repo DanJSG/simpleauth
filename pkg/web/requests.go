@@ -7,11 +7,6 @@ import (
 	"net/http"
 )
 
-type RequestProcessor interface {
-	RegisterHandlers()
-	RegisterHandler()
-}
-
 const messageKey = "message"
 
 var badRequestMessage = map[string]string{messageKey: "Request body cannot be empty."}

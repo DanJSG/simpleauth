@@ -1,14 +1,14 @@
-package user
+package auth
 
 import (
 	"fmt"
-	"github.com/danjsg/simpleauth/internal/user"
+	"github.com/danjsg/simpleauth/internal/auth"
 	"sync"
 	"testing"
 )
 
 func TestMemoryRepository_CreateUser(t *testing.T) {
-	repo := user.NewMemoryRepository()
+	repo := auth.NewUserRepository()
 	e1 := []string{
 		"a@test.com",
 		"b@test.com",
@@ -43,9 +43,9 @@ func TestMemoryRepository_CreateUser(t *testing.T) {
 	fmt.Printf("Length: %d\n", len(repo.GetUsers()))
 }
 
-func createUsers(repo user.Repository, emails *[]string) {
+func createUsers(repo auth.UserRepository, emails *[]string) {
 	for _, email := range *emails {
-		credentials := user.Credentials{
+		credentials := auth.Credentials{
 			Email:    email,
 			Password: "password",
 		}
@@ -54,11 +54,11 @@ func createUsers(repo user.Repository, emails *[]string) {
 }
 
 func TestMemoryRepository_UpdateUser(t *testing.T) {
-	repo := user.NewMemoryRepository()
+	repo := auth.NewUserRepository()
 	email := "test@test.com"
-	credentials := user.Credentials{Email: email, Password: "password"}
+	credentials := auth.Credentials{Email: email, Password: "password"}
 	createdUser := repo.CreateUser(&credentials)
-	updatedUser := user.User{
+	updatedUser := auth.User{
 		Id:       createdUser.Id,
 		Email:    createdUser.Email,
 		Password: "newPassword",

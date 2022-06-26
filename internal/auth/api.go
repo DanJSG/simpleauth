@@ -1,31 +1,17 @@
-package user
+package auth
 
 import (
 	"fmt"
-	"github.com/danjsg/simpleauth/internal/web"
+	"github.com/danjsg/simpleauth/pkg/web"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-type Version struct {
-	Major int
-	Minor int
-	Patch int
-}
-
-func (v *Version) FullyQualified() string {
-	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
-}
-
-func (v *Version) MajorMinor() string {
-	return fmt.Sprintf("%d.%d", v.Major, v.Minor)
-}
-
-type API struct {
-	Version  Version
+type UserAPI struct {
+	Version  web.Version
 	BasePath string
 	Log      logrus.FieldLogger
-	Service  Service
+	Service  UserService
 }
 
 type Credentials struct {
@@ -33,13 +19,13 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
-func (API *API) RegisterHandlers(router gin.IRouter, middleware ...gin.HandlerFunc) {
+func (API *UserAPI) RegisterHandlers(router gin.IRouter, middleware ...gin.HandlerFunc) {
 	basePath := fmt.Sprintf("/v%s/%s", API.Version.MajorMinor(), API.BasePath)
 	baseRouter := router.Group(basePath, middleware...)
 	API.registerAllHandlers(baseRouter)
 }
 
-func (API *API) registerAllHandlers(router gin.IRouter) {
+func (API *UserAPI) registerAllHandlers(router gin.IRouter) {
 	// TODO add handlers
 	router.POST("/authorize", func(context *gin.Context) {
 		var creds Credentials
@@ -49,7 +35,7 @@ func (API *API) registerAllHandlers(router gin.IRouter) {
 			return
 		}
 		// TODO finish implementation
-		//refreshToken := API.Service.authorizeUser(context, &creds)
+		//refreshToken := UserAPI.UserService.authorizeUser(context, &creds)
 	})
 	router.POST("/", noOpHandler)
 	router.GET("/token", noOpHandler)

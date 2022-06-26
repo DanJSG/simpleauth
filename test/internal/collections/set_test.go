@@ -2,7 +2,7 @@ package collections
 
 import (
 	"fmt"
-	"github.com/danjsg/simpleauth/internal/collections"
+	"github.com/danjsg/simpleauth/pkg/collections"
 	"testing"
 )
 

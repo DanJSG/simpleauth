@@ -1,8 +1,9 @@
-package user
+package auth
 
 import (
+	"github.com/danjsg/simpleauth/internal/auth"
 	"github.com/danjsg/simpleauth/internal/logging"
-	"github.com/danjsg/simpleauth/internal/user"
+	"github.com/danjsg/simpleauth/pkg/web"
 	"github.com/gin-gonic/gin"
 	"testing"
 )
@@ -14,10 +15,10 @@ func TestTemplating(t *testing.T) {
 	baseRouter := router.Group("/api")
 
 	log := logging.DefaultLogger()
-	API := &user.API{
+	API := &auth.UserAPI{
 		Log:      log,
-		BasePath: "user",
-		Version: user.Version{
+		BasePath: "auth",
+		Version: web.Version{
 			Major: 1,
 			Minor: 0,
 			Patch: 0,
