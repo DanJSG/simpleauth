@@ -2,12 +2,13 @@ package user
 
 import (
 	"fmt"
+	"github.com/danjsg/simpleauth/internal/user"
 	"sync"
 	"testing"
 )
 
 func TestMemoryRepository_CreateUser(t *testing.T) {
-	repo := NewMemoryRepository()
+	repo := user.NewMemoryRepository()
 	e1 := []string{
 		"a@test.com",
 		"b@test.com",
@@ -44,9 +45,9 @@ func TestMemoryRepository_CreateUser(t *testing.T) {
 	//fmt.Printf("Users: %v\n", users(repo.getUsers()))
 }
 
-func createUsers(repo Repository, emails *[]string) {
+func createUsers(repo user.Repository, emails *[]string) {
 	for _, email := range *emails {
-		credentials := credentials{
+		credentials := user.credentials{
 			Email:    email,
 			Password: "password",
 		}
