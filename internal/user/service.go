@@ -7,11 +7,11 @@ import (
 )
 
 type Creator interface {
-	CreateUser(*gin.Context, *credentials)
+	CreateUser(*gin.Context, *Credentials)
 }
 
 type TokenIssuer interface {
-	IssueRefreshToken(*gin.Context, *credentials)
+	IssueRefreshToken(*gin.Context, *Credentials)
 	IssueAccessToken(*gin.Context, *string)
 }
 
@@ -23,7 +23,7 @@ type Service struct {
 	repository *Repository
 }
 
-func (s *Service) CreateUser(context *gin.Context, credentials *credentials) {
+func (s *Service) CreateUser(context *gin.Context, credentials *Credentials) {
 	if err := credentialsPresent(credentials); err != nil {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, map[string]string{
 			"message": err.Error(),
@@ -34,7 +34,7 @@ func (s *Service) CreateUser(context *gin.Context, credentials *credentials) {
 	panic("implement me")
 }
 
-func (s *Service) IssueRefreshToken(context *gin.Context, credentials *credentials) {
+func (s *Service) IssueRefreshToken(context *gin.Context, credentials *Credentials) {
 	if err := credentialsPresent(credentials); err != nil {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, map[string]string{
 			"message": err.Error(),
@@ -76,7 +76,7 @@ func (s *Service) Revoke(context *gin.Context, accessToken *string, refreshToken
 	panic("implement me")
 }
 
-func credentialsPresent(credentials *credentials) error {
+func credentialsPresent(credentials *Credentials) error {
 	emailMissing := credentials.Email == ""
 	passwordMissing := credentials.Password == ""
 	credentialsMissing := emailMissing || passwordMissing

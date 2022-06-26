@@ -28,7 +28,7 @@ type API struct {
 	Service  Service
 }
 
-type credentials struct {
+type Credentials struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -42,7 +42,7 @@ func (API *API) RegisterHandlers(router gin.IRouter, middleware ...gin.HandlerFu
 func (API *API) registerAllHandlers(router gin.IRouter) {
 	// TODO add handlers
 	router.POST("/authorize", func(context *gin.Context) {
-		var creds credentials
+		var creds Credentials
 		err := context.ShouldBindJSON(&creds)
 		if err != nil {
 			web.HandleJsonPostError(context, err)

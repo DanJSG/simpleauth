@@ -8,21 +8,22 @@ import (
 )
 
 type User struct {
-	Id           [12]byte
-	Email        string                  `json:"email"`
-	PasswordHash string                  `json:"passwordHash"`
-	Tokens       collections.Set[string] `json:"tokens"`
+	Id    [12]byte
+	Email string `json:"email"`
+	// TODO replace this with a hash of the password
+	Password string                  `json:"password"`
+	Tokens   collections.Set[string] `json:"tokens"`
 }
 
 type Updater interface {
-	CreateUser(*credentials) *User
-	AuthorizeUser(*credentials) *User
+	CreateUser(*Credentials) *User
+	UpdateUser(*User)
 }
 
 type Retriever interface {
 	GetUserByEmail(*string) *User
 	GetUserById(*[12]byte) *User
-	getUsers() []*User
+	GetUsers() []*User
 }
 
 type Repository interface {
@@ -47,13 +48,12 @@ func NewMemoryRepository() Repository {
 	}
 }
 
-func (m *memoryRepository) CreateUser(credentials *credentials) *User {
+func (m *memoryRepository) CreateUser(credentials *Credentials) *User {
 	user := User{
-		Id:    createIDFromCount(m.count),
-		Email: credentials.Email,
-		// TODO add hash function
-		PasswordHash: credentials.Password,
-		Tokens:       collections.HashSet[string](),
+		Id:       createIDFromCount(m.count),
+		Email:    credentials.Email,
+		Password: credentials.Password,
+		Tokens:   collections.HashSet[string](),
 	}
 	m.writeMutex.Lock()
 	fmt.Printf("Adding user with email %s\n", user.Email)
@@ -64,22 +64,19 @@ func (m *memoryRepository) CreateUser(credentials *credentials) *User {
 	return &user
 }
 
-func (m *memoryRepository) AuthorizeUser(credentials *credentials) *User {
-	//TODO implement me
-	panic("implement me")
+func (m *memoryRepository) UpdateUser(user *User) {
+	*m.usersByEmail[user.Email] = *user
 }
 
 func (m *memoryRepository) GetUserByEmail(email *string) *User {
-	//TODO implement me
-	panic("implement me")
+	return m.usersByEmail[*email]
 }
 
 func (m *memoryRepository) GetUserById(id *[12]byte) *User {
-	//TODO implement me
-	panic("implement me")
+	return m.usersById[*id]
 }
 
-func (m *memoryRepository) getUsers() []*User {
+func (m *memoryRepository) GetUsers() []*User {
 	return m.users
 }
 
